@@ -11,6 +11,11 @@ Simply run the ```da-picker.py``` to index your data with the following argument
 
 and a few other optional arguments (check file).
 
+Example: 
+```bash
+!python /content/SpaceForceDataSearch/da-picker.py --UMAP True --subset_size 0.5 --INPUT_FILE_PATH "/content/embedding_path_tuple.pkl" --OUTPUT_FILE_PATH "/content/embedding_path_output" --metric True
+```
+
 ## Dependencies
 
 Install the necessary packages from requirements.txt using ```pip install -r requirements.txt``` before you run the scripts.
@@ -22,7 +27,4 @@ Install the necessary packages from requirements.txt using ```pip install -r req
 
 
 
-Example: 
-```bash
-!python /content/SpaceForceDataSearch/da-picker.py --UMAP True --subset_size 0.5 --INPUT_FILE_PATH "/content/embedding_path_tuple.pkl" --OUTPUT_FILE_PATH "/content/embedding_path_output" --metric True
-```
+
