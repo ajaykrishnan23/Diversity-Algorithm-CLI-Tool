@@ -21,9 +21,10 @@ Example:
 Install the necessary packages from requirements.txt using ```pip install -r requirements.txt``` before you run the scripts.
 
 ## TODO
-- [ ] Add Pt and Tf Model Support 
+- [ ] Add Pt Model Support 
+- [ ] Tf Model Support 
 - [ ] Add DA Variant   
-- [ ] Bring in Packag 
+- [ ] Bring in Package
 
 
 
