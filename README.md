@@ -13,7 +13,7 @@ and a few other optional arguments (check file).
 
 Example: 
 ```bash
-!python /content/SpaceForceDataSearch/da-picker.py --UMAP True --subset_size 0.5 --INPUT_FILE_PATH "/content/embedding_path_tuple.pkl" --OUTPUT_FILE_PATH "/content/embedding_path_output" --metric True
+!python /content/Diversity-Algorithm-CLI-Tool/da-picker.py --DATA_PATH /content/UCMerced_LandUse/Images --img_size 64 --embedding_size 2048 --UMAP True --subset_size 0.01  --INPUT_FILE_PATH "/content/pt_model.pt" --OUTPUT_FILE_PATH "/content/embedding_path_output" --metric True
 ```
 
 ## Dependencies
