@@ -4,6 +4,8 @@ from torchvision.datasets import ImageFolder
 from termcolor import colored
 from sklearn.preprocessing import LabelEncoder
 from matplotlib import colors 
+from torchvision import transforms
+from torch.utils.data import DataLoader
 import pickle
 import csv 
 import os
@@ -12,7 +14,32 @@ import pandas as pd
 import faiss 
 import umap
 import shutil
+import torch 
 import matplotlib.pyplot as plt
+
+def get_matrix(MODEL_PATH, DATA_PATH,img_size,size):
+    def to_tensor(pil):
+        return torch.tensor(np.array(pil)).permute(2,0,1).float()
+    t = transforms.Compose([
+                            transforms.Resize((img_size,img_size)),
+                            transforms.Lambda(to_tensor)
+                            ])
+    dataset = ImageFolder(DATA_PATH, transform = t)
+    model = torch.load(MODEL_PATH)
+    model.eval()
+    model.cuda()
+    with torch.no_grad():
+        data_matrix = torch.empty(size = (0, size)).cuda()
+        bs = 32
+        if len(dataset) < bs:
+          bs = 1
+        loader = DataLoader(dataset, batch_size = bs, shuffle = False)
+        for batch in loader:
+            x = batch[0].cuda()
+            embeddings = model(x)[0]
+            data_matrix = torch.vstack((data_matrix, embeddings))
+    paths = [dataset.imgs[i][0] for i in range(len(dataset.imgs))]
+    return paths, data_matrix.cpu().detach().numpy()
 
 
 def process_faiss(index_path, dataset_path): 
@@ -77,7 +104,7 @@ def plot_umap(feature_list, filenames , path, n_neighbors=20, count = 0):
   plt.title('UMAP embedding');
   plt.colorbar(scatter_plot)
   
-  fname = path + 'UMAP_DA_Embeddings' + '.png'
+  fname = path + '_UMAP_DA_Embeddings' + '.png'
   print("UMAP Saved at:",fname)
   plt.savefig(fname)
   plt.show();
@@ -161,6 +188,8 @@ def driver():
   parser.add_argument("--metric", default = False, type=bool, help="enable count metric")
   parser.add_argument("--DATA_PATH", type=str, default=None, help="Path to dataset in ImageFolder format")
   parser.add_argument("--UMAP", default = False, type=bool, help="enable UMAP")
+  parser.add_argument("--img_size", default = None, type=int, help="Size of Images (Required when passing model)")
+  parser.add_argument("--embedding_size", default = None, type=int, help="Size of model's output embedding (Required when passing model)")
 
   args = parser.parse_args()
   INPUT_FILE_PATH = args.INPUT_FILE_PATH
@@ -169,6 +198,8 @@ def driver():
   metric = args.metric
   UMAP = args.UMAP
   DATA_PATH = args.DATA_PATH
+  img_size = args.img_size
+  embedding_size = args.embedding_size
 
   if '.pkl' in INPUT_FILE_PATH:
     filenames, feature_list = load_pickle(INPUT_FILE_PATH)   
@@ -176,6 +207,18 @@ def driver():
     filenames, feature_list = process_csv(INPUT_FILE_PATH) 
   elif '.bin' in INPUT_FILE_PATH:
     filenames, feature_list = process_faiss(INPUT_FILE_PATH, DATA_PATH)
+  elif '.pt' in INPUT_FILE_PATH:
+    # if all([img_size, embedding_size, DATA_PATH]) == True:
+      #both are none ie. input not given
+    if img_size == None:
+      print("Provide img_size and embedding_size")
+      exit()
+    if embedding_size == None:
+      print('Provide embedding size')
+    if DATA_PATH == None:
+      print('Provide Dataset path')
+    print(colored('Using Model to extract embeddings and metadata','blue'))
+    filenames, feature_list = get_matrix(INPUT_FILE_PATH, DATA_PATH, img_size, embedding_size)
 
   
   print(colored("Number of Files and Features",'blue'),len(filenames), colored("Embedding Size",'blue'), feature_list[0].shape)
