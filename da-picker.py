@@ -6,16 +6,18 @@ from sklearn.preprocessing import LabelEncoder
 from matplotlib import colors 
 from torchvision import transforms
 from torch.utils.data import DataLoader
-import pickle
-import csv 
-import os
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd 
+import pickle
+import random 
+import csv 
+import os
 import faiss 
 import umap
 import shutil
 import torch 
-import matplotlib.pyplot as plt
+
 
 def get_matrix(MODEL_PATH, DATA_PATH,img_size,size):
     def to_tensor(pil):
@@ -139,6 +141,40 @@ def min_max_diverse_embeddings(n , filenames, feature_list, i = None) :
 
   return filename_output, set_output, min_distances
 
+def min_max_diverse_embeddings_fast(n , filenames, feature_list, sample_size, i = None) :
+  if len(feature_list) != len(filenames) or len(feature_list) == 0 :
+      return 'Data Inconsistent'
+  n = int(n * len(feature_list))
+  sample_size = int(sample_size * n)
+  print("Len of Filenames and Feature List for sanity check:",len(filenames),len(feature_list))
+  filename_copy = filenames.copy()
+  set_input = feature_list.copy()
+  set_output = []
+  filename_output = []
+
+  # random.seed(1234)
+  idx = 0
+  if i is None: 
+      idx = random.randint(0, len(set_input) -1)
+  else:
+      idx = i
+  set_output.append(set_input[idx])
+  filename_output.append(filename_copy[idx])
+  min_distances = [1000] * len(set_input)
+                                                                                # maximizes the minimum distance
+  for _ in tqdm(range(n - 1)):
+    sampled_inds = random.sample(range(0,len(feature_list)),sample_size)
+    for idx in sampled_inds :  
+        dist = np.linalg.norm(set_input[idx] - set_output[-1])
+        if min_distances[idx] > dist :
+            min_distances[idx] = dist
+    inds = min_distances.index(max(min_distances))
+    set_output.append(set_input[inds])
+    filename_output.append(filename_copy[inds])
+
+  return filename_output, set_output, min_distances
+
+
 def farthest_point(embeddings):
   import scipy.spatial.distance as dist
   centroid = sum(embeddings)/len(embeddings)
@@ -190,6 +226,8 @@ def driver():
   parser.add_argument("--UMAP", default = False, type=bool, help="enable UMAP")
   parser.add_argument("--img_size", default = None, type=int, help="Size of Images (Required when passing model)")
   parser.add_argument("--embedding_size", default = None, type=int, help="Size of model's output embedding (Required when passing model)")
+  parser.add_argument("--technique", type=str, default="DA_STD", help="Diversity Algorithm Technique (DA_STD/DA_FAST)")
+  parser.add_argument("--sample_size", type=float, default=None, help="Needed if DA_FAST is called. Number of elements to be randomly sampled from the subset")
 
   args = parser.parse_args()
   INPUT_FILE_PATH = args.INPUT_FILE_PATH
@@ -200,6 +238,8 @@ def driver():
   DATA_PATH = args.DATA_PATH
   img_size = args.img_size
   embedding_size = args.embedding_size
+  technique = args.technique
+  sample_size = args.sample_size
 
   if '.pkl' in INPUT_FILE_PATH:
     filenames, feature_list = load_pickle(INPUT_FILE_PATH)   
@@ -223,9 +263,18 @@ def driver():
   
   print(colored("Number of Files and Features",'blue'),len(filenames), colored("Embedding Size",'blue'), feature_list[0].shape)
 
-  print(colored("Running DA..",'blue'))
-  da_files, da_embeddings, _ = min_max_diverse_embeddings(subset_size, filenames, feature_list, i = farthest_point(feature_list))
-
+  
+  
+  if technique=='DA_STD':
+    print(colored("Running DA Standard..",'blue'))
+    da_files, da_embeddings, _ = min_max_diverse_embeddings(subset_size, filenames, feature_list, i = farthest_point(feature_list))
+  elif technique=='DA_FAST':
+    if sample_size==None:
+      print("sample_size needed")
+      exit() 
+    else: 
+      print(colored("Running DA Fast..",'blue'))
+      da_files, da_embeddings, _ = min_max_diverse_embeddings_fast(subset_size, filenames, feature_list, sample_size, i = farthest_point(feature_list))
   
   if OUTPUT_FILE_PATH != None:
     if '.pkl' in OUTPUT_FILE_PATH:
