@@ -7,7 +7,7 @@ Simply run the ```da-picker.py``` to index your data with the following argument
 * --DATA_PATH : Path to Dataset
 * --UMAP : Enable UMAP for Diversity Embeddings
 * --subset_size : Percentage of points in the entire dataset to selected by the Diversity Algorithm
-* --OUTPUT_FILE_PATH : File path for the Diversity Algorithm Output. Generates a '.pkl' file if extension is mentioned in the argument, else creates a new dataset if a folder path is given
+* --OUTPUT_FILE_PATH : File path for the Diversity Algorithm Output. Creates a new dataset using Diverse Embeddings.
 * --metric : Prints out a Class Distribution
 * --img_size : Size of Images (Required when passing model)
 * --embedding_size: Size of model's output embedding (Required when passing model)
