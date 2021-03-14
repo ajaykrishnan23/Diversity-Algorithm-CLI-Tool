@@ -26,6 +26,8 @@ class DaTechniques:
         return 'Data Inconsistent'
     n = int(self.subset_size * len(self.embeddings))
     # print("Len of Filenames and Feature List for sanity check:",len(filenames),len(feature_list))
+    print("Running DA Standard..")
+    print("Subset_Size:",n)
     filename_copy = self.filenames.copy()
     set_input = self.embeddings.copy()
     set_output = []
@@ -56,7 +58,9 @@ class DaTechniques:
     if len(self.embeddings) != len(self.filenames) or len(self.embeddings) == 0 :
         return 'Data Inconsistent'
     n = int(self.subset_size * len(self.embeddings))
-    sample_size = int(self.sample_size * n)
+    sample_size = int(self.sample_size * len(self.filenames))
+    print("Subset Size:",subset_size)
+    print("Sample Size:",sample_size)
     # print("Len of Filenames and Feature List for sanity check:",len(filenames),len(feature_list))
     filename_copy = self.filenames.copy()
     set_input = self.embeddings.copy()
