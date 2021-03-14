@@ -145,7 +145,7 @@ def min_max_diverse_embeddings_fast(n , filenames, feature_list, sample_size, i 
   if len(feature_list) != len(filenames) or len(feature_list) == 0 :
       return 'Data Inconsistent'
   n = int(n * len(feature_list))
-  sample_size = int(sample_size * n)
+  sample_size = int(sample_size * len(feature_list))
   print("Len of Filenames and Feature List for sanity check:",len(filenames),len(feature_list))
   filename_copy = filenames.copy()
   set_input = feature_list.copy()
