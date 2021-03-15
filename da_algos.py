@@ -75,8 +75,9 @@ class DaTechniques:
     filename_output.append(filename_copy[idx])
     min_distances = [1000] * len(set_input)
     # maximizes the minimum distance
-
+    count = 0
     for _ in tqdm(range(n - 1)):
+      # min_distances[inds] = (set_input[inds] - set_output[-1]) #incase the index value of maximum index does not get selected
       sampled_inds = random.sample(range(0,len(self.embeddings)),sample_size)
       for idx in sampled_inds :  
           dist = np.linalg.norm(set_input[idx] - set_output[-1])
@@ -85,5 +86,8 @@ class DaTechniques:
       inds = min_distances.index(max(min_distances))
       set_output.append(set_input[inds])
       filename_output.append(filename_copy[inds])
+      dist = np.linalg.norm(set_input[inds] - set_output[-1])
+      if min_distances[inds]>dist:
+        min_distances[inds] = dist 
 
     return filename_output, set_output, min_distances
