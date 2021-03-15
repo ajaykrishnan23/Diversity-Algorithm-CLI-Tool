@@ -171,6 +171,8 @@ def min_max_diverse_embeddings_fast(n , filenames, feature_list, sample_size, i 
     inds = min_distances.index(max(min_distances))
     set_output.append(set_input[inds])
     filename_output.append(filename_copy[inds])
+    if min_distances[inds]>dist:
+        min_distances[inds] = dist
 
   return filename_output, set_output, min_distances
 
