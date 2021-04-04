@@ -88,9 +88,9 @@ class ModelUtils:
       if x.split("/")[-2] not in os.listdir(dir):
         # os.mkdir(os.path.join(os.path.join(dir,"train"),x.split("/")[-2]))
         os.mkdir(os.path.join(dir,x.split("/")[-2]))
-        shutil.move(x, os.path.join(os.path.join(dir,x.split("/")[-2])))
+        shutil.copy(x, os.path.join(os.path.join(dir,x.split("/")[-2])))
       else:
-        shutil.move(x, os.path.join(os.path.join(dir,x.split("/")[-2])))
+        shutil.copy(x, os.path.join(os.path.join(dir,x.split("/")[-2])))
     print(colored('Subset moved to directory. Dataset abiding formats created successfully','blue'))
 
   def plot_umap(self, output_path, n_neighbors=20):
