@@ -46,10 +46,10 @@ def driver():
   
   if args.technique=='DA_STD':
     print(colored("Running DA Standard..",'blue'))
-    da_files, da_embeddings, _ = da.min_max_diverse_embeddings(i = da.farthest_point())
+    da_files, da_embeddings, _ = da.min_max_diverse_embeddings()
   elif args.technique=='DA_FAST':
       print(colored("Running DA Fast..",'blue'))
-      da_files, da_embeddings, _ = da.min_max_diverse_embeddings_fast(i = da.farthest_point())
+      da_files, da_embeddings, _ = da.min_max_diverse_embeddings_fast()
   utils.filenames = da_files
   utils.embeddings = da_embeddings
   if args.OUTPUT_FILE_PATH != None:
