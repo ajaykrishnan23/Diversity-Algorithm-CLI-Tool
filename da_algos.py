@@ -83,7 +83,7 @@ class DaTechniques:
       
     n = int(subset_size * len(embeddings))
     sample_size = int(sample_size * len(filenames))
-    print("Running DA Standard..")
+    print("Running DA Fast..")
     print("Subset Size:",n)
     print("Sample Size:",sample_size)
     filename_copy = filenames
