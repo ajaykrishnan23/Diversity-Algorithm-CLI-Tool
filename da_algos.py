@@ -49,7 +49,7 @@ class DaTechniques:
     # set_output = np.append(set_output,set_input[idx])
     set_output.append(set_input[idx])
     filename_output.append(filename_copy[idx])
-    min_distances = np.full(len(set_input),1000.0)
+    min_distances = np.full(len(set_input),np.inf)
     # maximizes the minimum distance
     count = 10
     for _ in range(n - 1):
@@ -97,7 +97,7 @@ class DaTechniques:
         idx = i
     set_output.append(set_input[idx])
     filename_output.append(filename_copy[idx])
-    min_distances = np.full(len(set_input),1000.0)
+    min_distances = np.full(len(set_input),np.inf)
     # maximizes the minimum distance
     count = 10
     for _ in (range(n - 1)):
