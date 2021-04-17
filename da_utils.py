@@ -45,7 +45,7 @@ class ModelUtils:
         loader = DataLoader(dataset, batch_size = bs, shuffle = False)
         for batch in loader:
             x = batch[0].cuda()
-            embeddings = model(x)[0]
+            embeddings = model(x)
             data_matrix = torch.vstack((data_matrix, embeddings))
     paths = [dataset.imgs[i][0] for i in range(len(dataset.imgs))]
     self.embeddings = data_matrix.cpu().detach().numpy()
